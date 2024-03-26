@@ -150,4 +150,4 @@ LOGGING = {
     }
 }
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('main')
