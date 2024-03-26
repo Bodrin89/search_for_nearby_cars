@@ -7,4 +7,5 @@
 !manage.py
 !entrypoint.sh
 !utils
+!validators
 !uszips.csv

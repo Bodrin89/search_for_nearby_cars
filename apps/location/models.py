@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class LocationModel(models.Model):
     """Модель локации"""
 
@@ -13,7 +14,3 @@ class LocationModel(models.Model):
     zip = models.CharField(max_length=100, verbose_name='Почтовый индекс')
     lat = models.FloatField(verbose_name='Широта')
     lng = models.FloatField(verbose_name='Долгота')
-
-
-
-
