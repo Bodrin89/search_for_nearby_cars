@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,7 +49,7 @@ if DEBUG:
     ]
 
     INTERNAL_IPS = [
-        "127.0.0.1",
+        '127.0.0.1',
     ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,8 +75,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_POR'),
     }
 }
 
@@ -106,7 +111,5 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
-
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

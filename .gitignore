@@ -247,3 +247,6 @@ cython_debug/
 /media/
 /identifier.sqlite
 /static/
+
+#volumes
+/WelbeX_pg_data

@@ -13,7 +13,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     volumes:
-      - WelbeX_pg_data:/var/lib/postgresql/data
+      - ./WelbeX_pg_data:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
       timeout: 3s
