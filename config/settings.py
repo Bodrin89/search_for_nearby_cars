@@ -29,7 +29,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'apps.cargo',
-    'apps.location'
+    'apps.location',
+    'apps.car',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
