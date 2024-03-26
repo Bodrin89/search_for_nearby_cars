@@ -250,3 +250,5 @@ cython_debug/
 
 #volumes
 /WelbeX_pg_data
+
+uszips.csv

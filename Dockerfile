@@ -13,4 +13,3 @@ COPY . .
 ENTRYPOINT ["bash", "entrypoint.sh"]
 
 EXPOSE 8000
-
