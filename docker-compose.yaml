@@ -1,0 +1,47 @@
+---
+version : '3.9'
+
+services:
+  db:
+    container_name: WelbeX_db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - WelbeX_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      timeout: 3s
+      retries: 10
+      interval: 3s
+    networks:
+      - WelbeX_network
+
+  api:
+    container_name: WelbeX_api
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/code
+#    command: ["gunicorn", "config.wsgi", "-w", "4", "-b", "0.0.0.0:8000"]
+    command: [python3, manage.py, runserver, 0.0.0.0:8000]
+    networks:
+      - WelbeX_network
+
+networks:
+  WelbeX_network:
+    driver: bridge
+
+volumes :
+  WelbeX_pg_data:
