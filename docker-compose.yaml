@@ -36,6 +36,7 @@ services:
       - ./:/code
 #    command: ["gunicorn", "config.wsgi", "-w", "4", "-b", "0.0.0.0:8000"]
     command: [python3, manage.py, runserver, 0.0.0.0:8000]
+
     networks:
       - WelbeX_network
 

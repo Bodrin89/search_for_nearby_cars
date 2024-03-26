@@ -6,3 +6,5 @@
 !poetry.lock
 !manage.py
 !entrypoint.sh
+!utils
+!uszips.csv
