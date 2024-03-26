@@ -1,2 +1,9 @@
+from rest_framework import generics
 
-# Create your views here.
+from apps.cargo.serializers import CreateCargoSerializer
+
+
+class CreateCargoView(generics.CreateAPIView):
+    """View для создания груза"""
+
+    serializer_class = CreateCargoSerializer

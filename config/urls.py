@@ -6,6 +6,7 @@ from config.settings import DEBUG
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cargo/', include('apps.cargo.urls')),
 ]
 
 if DEBUG:

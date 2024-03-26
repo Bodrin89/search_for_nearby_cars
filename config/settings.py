@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 
@@ -115,3 +116,38 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'main_format': {
+            'format': '{asctime} - {levelname} - {module} - {filename} - {lineno} - {message}',
+            'style': '{'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'main_format',
+            'level': 'WARNING'
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'main_format',
+            'filename': 'log.log',
+            'maxBytes': 1000 * 1024 * 10,
+            'backupCount': 5
+        }
+    },
+    'loggers': {
+        'main': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True
+        }
+    }
+}
+
+LOGGER = logging.getLogger(__name__)
