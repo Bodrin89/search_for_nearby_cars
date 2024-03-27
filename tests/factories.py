@@ -1,8 +1,10 @@
 import factory
 from factory.django import DjangoModelFactory
 
+from apps.car.models import CarModel
 from apps.cargo.models import CargoModel
 from apps.location.models import LocationModel
+from utils.gen_number_car import generate_custom_code
 
 
 class LocationFactory(DjangoModelFactory):
@@ -24,3 +26,12 @@ class CargoFactory(DjangoModelFactory):
     location_delivery = factory.SubFactory(LocationFactory)
     weight = factory.Faker('pyint', min_value=1, max_value=1000)
     description = factory.Faker('text', max_nb_chars=1000)
+
+
+class CarFactory(DjangoModelFactory):
+    class Meta:
+        model = CarModel
+
+    number = generate_custom_code()
+    now_location = factory.SubFactory(LocationFactory)
+    lifting_capacity = factory.Faker('pyint', min_value=1, max_value=1000)

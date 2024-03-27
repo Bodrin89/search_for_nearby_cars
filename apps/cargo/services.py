@@ -42,7 +42,7 @@ class CargoService:
             distance_in_miles = geodesic((location_cargo_lat, location_cargo_lng),
                                          (location_cars_lat, location_cars_lng)).miles
 
-            if distance_in_miles <= 1500:
+            if distance_in_miles <= 450:
                 nearest_cars.append(car)
         return {
             'count_nearest_cars': len(nearest_cars)
