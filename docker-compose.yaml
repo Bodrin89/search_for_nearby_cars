@@ -54,37 +54,37 @@ services:
     networks:
       - WelbeX_network
 
-  celery-worker:
-    container_name: WelbeX_celery_worker
-    build: .
-    restart: always
-    env_file:
-      - .env_docker
-    depends_on:
-      db:
-        condition: service_healthy
-      api:
-        condition: service_started
-      redis:
-        condition: service_started
-    command: celery -A config -l info > /var/log/worker.log 2>&1
-
-  celery-beat:
-    container_name: WelbeX_celery_beat
-    build: .
-    restart: always
-    env_file:
-      - .env_docker
-    depends_on:
-      db:
-        condition: service_healthy
-      api:
-        condition: service_started
-      redis:
-        condition: service_started
-      celery-worker:
-        condition: service_started
-    command: celery -A config -l warning
+#  celery-worker:
+#    container_name: WelbeX_celery_worker
+#    build: .
+#    restart: always
+#    env_file:
+#      - .env_docker
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      api:
+#        condition: service_started
+#      redis:
+#        condition: service_started
+#    command: celery -A config -l info > /var/log/worker.log 2>&1
+#
+#  celery-beat:
+#    container_name: WelbeX_celery_beat
+#    build: .
+#    restart: always
+#    env_file:
+#      - .env_docker
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      api:
+#        condition: service_started
+#      redis:
+#        condition: service_started
+#      celery-worker:
+#        condition: service_started
+#    command: celery -A config -l warning
 
 networks:
   WelbeX_network:

@@ -65,4 +65,4 @@ def added_cars_postgres():
 
 
 added_cars_postgres()
-# load_data_postgres(file_path)
+load_data_postgres(file_path)
