@@ -4,10 +4,15 @@ import os
 import random
 from pathlib import Path
 
+
 import psycopg2
 from dotenv import load_dotenv
 
-from utils.gen_number_car import generate_custom_code
+def generate_custom_code():
+    random_number = random.randint(1000, 9999)
+    random_letter = random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    return f'{random_number}{random_letter}'
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -64,5 +69,6 @@ def added_cars_postgres():
     cursor.close()
 
 
-added_cars_postgres()
 load_data_postgres(file_path)
+added_cars_postgres()
+

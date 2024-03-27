@@ -10,6 +10,6 @@ RUN poetry config virtualenvs.create false \
   && poetry install --no-root --no-interaction --no-ansi
 COPY . .
 
-ENTRYPOINT ["bash", "entrypoint.sh"]
+#ENTRYPOINT ["bash", "entrypoint.sh"]
 
 EXPOSE 8000
