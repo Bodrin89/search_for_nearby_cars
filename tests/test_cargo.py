@@ -85,9 +85,10 @@ class TestGetCargoWithCar:
             car.append(car_item)
 
         expected_response = {
+            'id': cargo.id,
             'location_pick_up': cargo.location_pick_up.id,
             'location_delivery': cargo.location_delivery.id,
-            'count_nearest_cars': {'count_nearest_cars': NEAREST_CAR_COUNT}
+            'count_nearest_cars': NEAREST_CAR_COUNT
         }
 
         url = reverse('get-cargo')
@@ -110,9 +111,10 @@ class TestGetCargoWithCar:
             car.append(car_item)
 
         expected_response = {
+            'id': cargo.id,
             'location_pick_up': cargo.location_pick_up.id,
             'location_delivery': cargo.location_delivery.id,
-            'count_nearest_cars': {'count_nearest_cars': 0}
+            'count_nearest_cars': 0
         }
 
         url = reverse('get-cargo')

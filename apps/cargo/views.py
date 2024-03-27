@@ -1,3 +1,4 @@
+
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -18,6 +19,7 @@ class GetCargoView(generics.ListAPIView):
     """View для получения груза и количество ближайших машин"""
 
     serializer_class = GetCargoSerializer
+
     queryset = CargoDAO().dao_get_cargo_with_location()
 
 

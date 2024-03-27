@@ -20,21 +20,28 @@ class CreateCargoSerializer(serializers.Serializer):
         return CargoService().create_cargo(validated_data)
 
 
-class CountNearestCarsSerializer(serializers.Serializer):
-    """Сериализатор для получения груза и количество ближайших машин"""
-
-    count_nearest_cars = serializers.IntegerField(read_only=True)
-
-    def get_attribute(self, instance):
-        return CargoService().get_nearest_cars(instance)
-
-
-class GetCargoSerializer(serializers.Serializer):
+class GetCargoSerializer(serializers.ModelSerializer):
     """Сериализатор для получения груза и количество ближайших машин"""
 
     location_pick_up = serializers.PrimaryKeyRelatedField(read_only=True)
     location_delivery = serializers.PrimaryKeyRelatedField(read_only=True)
-    count_nearest_cars = CountNearestCarsSerializer()
+    count_nearest_cars = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CargoModel
+        fields = ('id', 'location_pick_up', 'location_delivery', 'count_nearest_cars')
+
+    def validate(self, attrs):
+        return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        value = data.pop('count_nearest_cars')
+        data['count_nearest_cars'] = value.get('count_nearest_cars')
+        return data
+
+    def get_count_nearest_cars(self, instance):
+        return CargoService().get_nearest_cars(instance)
 
 
 class CargoRetrieveSerializer(serializers.ModelSerializer):
