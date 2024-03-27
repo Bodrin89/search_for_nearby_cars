@@ -20,6 +20,9 @@ class CargoDAO:
     def dao_get_retrieve_cargo(cargo_id):
         """Получение груза по id"""
         try:
-            return CargoModel.objects.filter(id=cargo_id)
+            if CargoModel.objects.filter(id=cargo_id):
+                return CargoModel.objects.filter(id=cargo_id)
+            else:
+                raise ValidationError('Груз не найден')
         except CargoModel.DoesNotExist:
             raise ValidationError('Груз не найден')

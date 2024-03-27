@@ -17,6 +17,9 @@ class CarDAO:
     def get_car_for_id(car_id):
         """Получение машины по id"""
         try:
-            return CarModel.objects.filter(id=car_id)
+            if CarModel.objects.filter(id=car_id):
+                return CarModel.objects.filter(id=car_id)
+            else:
+                raise ValidationError('Машина не найдена')
         except CarModel.DoesNotExist:
             raise ValidationError('Машина не найдена')

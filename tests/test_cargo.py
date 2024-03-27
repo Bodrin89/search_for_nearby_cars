@@ -174,3 +174,14 @@ class TestUpdateCargo:
 
         assert response.status_code == 200
         assert response.data == expected_response
+
+
+@pytest.mark.django_db
+class TestDeleteCargo:
+    """Тест на удаление груза"""
+    def test_delete_cargo(self, client, cargo_factory):
+        """Удаление груза по id"""
+        cargo = cargo_factory()
+        url = reverse('delete-cargo', kwargs={'pk': cargo.id})
+        response = client.delete(path=url)
+        assert response.status_code == 204

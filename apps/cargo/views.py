@@ -1,4 +1,5 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 
 from apps.cargo.dao_cargo import CargoDAO
 from apps.cargo.serializers import (CargoRetrieveSerializer,
@@ -40,3 +41,13 @@ class UpdateCargoView(generics.UpdateAPIView):
         cargo_id = self.kwargs.get('pk')
         cargo = CargoDAO().dao_get_retrieve_cargo(cargo_id)
         return cargo
+
+
+class DeleteCargoView(generics.DestroyAPIView):
+    """View для удаления груза"""
+
+    def destroy(self, request, *args, **kwargs):
+        cargo_id = self.kwargs.get('pk')
+        cargo = CargoDAO().dao_get_retrieve_cargo(cargo_id)
+        cargo.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
