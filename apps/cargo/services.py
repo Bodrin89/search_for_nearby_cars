@@ -50,8 +50,7 @@ class CargoService:
         }
 
     @staticmethod
-    def get_info_cars(obj):
-        cars = CarDAO().dao_get_all_cars_with_location()
+    def get_info_cars(obj, cars):
         car_info_data = []
 
         location_cargo_lat = obj.location_pick_up.lat

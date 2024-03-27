@@ -3,6 +3,7 @@ import factory
 import pytest
 from django.urls import reverse
 
+from apps.cargo.services import CargoService
 from tests.factories import CarFactory, CargoFactory, LocationFactory
 from utils.gen_coordinates import generate_random_coordinates, generate_random_coordinates_not_radius
 from utils.gen_number_car import generate_custom_code
@@ -118,3 +119,31 @@ class TestGetCargoWithCar:
         response = client.get(path=url)
         assert response.status_code == 200
         assert response.data[0] == expected_response
+
+
+@pytest.mark.django_db
+class TestGetCargoId:
+    """Тест на получение груза по id и списка со всеми машинами"""
+
+    def test_get_cargo_id(self, client, cargo_factory, car_factory):
+        """Тест на получение груза по id и списка со всеми машинами и расстоянием до pick-up"""
+        car = []
+        for _ in range(10):
+            car.append(car_factory(number=generate_custom_code()))
+
+        cargo = cargo_factory()
+        car_info = CargoService.get_info_cars(cargo, car)
+        url = reverse('retrieve-cargo', kwargs={'pk': cargo.id})
+        response = client.get(path=url)
+
+        expected_response = {
+            'id': cargo.id,
+            'location_pick_up': cargo.location_pick_up.id,
+            'location_delivery': cargo.location_delivery.id,
+            'weight': cargo.weight,
+            'description': cargo.description,
+            'car_info': car_info
+        }
+
+        assert response.status_code == 200
+        assert response.data == expected_response

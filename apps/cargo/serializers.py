@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.car.dao_car import CarDAO
 from apps.cargo.models import CargoModel
 from apps.cargo.services import CargoService
 
@@ -44,4 +45,5 @@ class CargoRetrieveSerializer(serializers.ModelSerializer):
         fields = ('id', 'location_pick_up', 'location_delivery', 'description', 'weight', 'car_info')
 
     def get_car_info(self, obj: CargoModel):
-        return CargoService.get_info_cars(obj)
+        car = CarDAO().dao_get_all_cars_with_location()
+        return CargoService.get_info_cars(obj, car)
