@@ -8,6 +8,7 @@ from apps.location.models import LocationModel
 
 
 class CargoService:
+    """Сервис для груза"""
 
     @staticmethod
     def create_cargo(data):
@@ -47,3 +48,24 @@ class CargoService:
         return {
             'count_nearest_cars': len(nearest_cars)
         }
+
+    @staticmethod
+    def get_info_cars(obj):
+        cars = CarDAO().dao_get_all_cars_with_location()
+        car_info_data = []
+
+        location_cargo_lat = obj.location_pick_up.lat
+        location_cargo_lng = obj.location_pick_up.lng
+
+        for car in cars:
+            location_cars_lat = car.now_location.lat
+            location_cars_lng = car.now_location.lng
+
+            distance_in_miles = geodesic((location_cargo_lat, location_cargo_lng),
+                                         (location_cars_lat, location_cars_lng)).miles
+            car_data = {
+                'car_number': car.number,
+                'distance': distance_in_miles
+            }
+            car_info_data.append(car_data)
+        return car_info_data

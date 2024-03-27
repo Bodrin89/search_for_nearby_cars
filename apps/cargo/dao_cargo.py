@@ -13,3 +13,8 @@ class CargoDAO:
     def dao_get_cargo_with_location():
         """Получение всех грузов с локацией"""
         return CargoModel.objects.select_related('location_pick_up', 'location_delivery').all()
+
+    @staticmethod
+    def dao_get_retrieve_cargo(cargo_id):
+        """Получение груза по id"""
+        return CargoModel.objects.filter(id=cargo_id)
