@@ -5,6 +5,8 @@ services:
   db:
     container_name: WelbeX_db
     image: postgres:15-alpine
+    env_file:
+      - .env_docker
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -29,7 +31,7 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - .env
+      - .env_docker
     ports:
       - 8000:8000
     volumes:
@@ -45,12 +47,44 @@ services:
     image: redis
     restart: always
     env_file:
-      - .env
+      - .env_docker
     ports:
       - 6379:6379
 
     networks:
       - WelbeX_network
+
+  celery-worker:
+    container_name: WelbeX_celery_worker
+    build: .
+    restart: always
+    env_file:
+      - .env_docker
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+      redis:
+        condition: service_started
+    command: celery -A config -l info > /var/log/worker.log 2>&1
+
+  celery-beat:
+    container_name: WelbeX_celery_beat
+    build: .
+    restart: always
+    env_file:
+      - .env_docker
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+      redis:
+        condition: service_started
+      celery-worker:
+        condition: service_started
+    command: celery -A config -l warning
 
 networks:
   WelbeX_network:
