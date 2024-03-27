@@ -147,3 +147,30 @@ class TestGetCargoId:
 
         assert response.status_code == 200
         assert response.data == expected_response
+
+
+@pytest.mark.django_db
+class TestUpdateCargo:
+    """Тест на обновление груза"""
+
+    def test_update_cargo(self, client, cargo_factory):
+        """Обновление описания и веса груза по id"""
+        cargo = cargo_factory()
+
+        url = reverse('update-cargo', kwargs={'pk': cargo.id})
+        data_for_update = {
+            'description': 'test',
+            'weight': 100
+        }
+        response = client.put(path=url, data=data_for_update)
+
+        expected_response = {
+            'id': cargo.id,
+            'location_pick_up': cargo.location_pick_up.id,
+            'location_delivery': cargo.location_delivery.id,
+            'weight': data_for_update['weight'],
+            'description': data_for_update['description']
+        }
+
+        assert response.status_code == 200
+        assert response.data == expected_response

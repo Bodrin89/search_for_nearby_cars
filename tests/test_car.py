@@ -3,7 +3,6 @@ from django.urls import reverse
 
 from apps.car.models import CarModel
 from apps.location.models import LocationModel
-from config.settings import LOGGER
 from utils.gen_number_car import generate_custom_code
 
 
@@ -33,5 +32,3 @@ class TestCar:
         }
         assert response.status_code == 200
         assert response.data == expected_response
-
-

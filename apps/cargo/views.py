@@ -1,7 +1,10 @@
 from rest_framework import generics
 
 from apps.cargo.dao_cargo import CargoDAO
-from apps.cargo.serializers import CargoRetrieveSerializer, CreateCargoSerializer, GetCargoSerializer
+from apps.cargo.serializers import (CargoRetrieveSerializer,
+                                    CreateCargoSerializer,
+                                    GetCargoSerializer,
+                                    UpdateCargoSerializer,)
 
 
 class CreateCargoView(generics.CreateAPIView):
@@ -21,6 +24,17 @@ class GetCargoIdView(generics.RetrieveAPIView):
     """View для получения груза c номерами машин и расстоянием от них до груза"""
 
     serializer_class = CargoRetrieveSerializer
+
+    def get_queryset(self):
+        cargo_id = self.kwargs.get('pk')
+        cargo = CargoDAO().dao_get_retrieve_cargo(cargo_id)
+        return cargo
+
+
+class UpdateCargoView(generics.UpdateAPIView):
+    """View для обновления груза"""
+
+    serializer_class = UpdateCargoSerializer
 
     def get_queryset(self):
         cargo_id = self.kwargs.get('pk')

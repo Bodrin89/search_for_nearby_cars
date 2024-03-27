@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
 from apps.car.models import CarModel
@@ -18,7 +19,8 @@ class UpdateCarSerializer(serializers.ModelSerializer):
     zip_now_location = serializers.CharField(max_length=10000, write_only=True)
     now_location = serializers.PrimaryKeyRelatedField(read_only=True)
     number = serializers.CharField(max_length=10000, required=False)
-    lifting_capacity = serializers.IntegerField(required=False)
+    lifting_capacity = serializers.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)],
+                                                required=False)
 
     class Meta:
         model = CarModel
