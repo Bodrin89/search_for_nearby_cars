@@ -40,6 +40,18 @@ services:
     networks:
       - WelbeX_network
 
+  redis:
+    container_name: WelbeX_redis
+    image: redis
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 6379:6379
+
+    networks:
+      - WelbeX_network
+
 networks:
   WelbeX_network:
     driver: bridge
