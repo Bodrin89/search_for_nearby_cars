@@ -7,6 +7,7 @@ from apps.car.serializers import UpdateCarSerializer
 class UpdateCarView(generics.UpdateAPIView):
 
     serializer_class = UpdateCarSerializer
+    http_method_names = ['put']
 
     def get_queryset(self):
         car_id = self.kwargs.get('pk')

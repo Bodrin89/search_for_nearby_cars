@@ -66,6 +66,7 @@ class UpdateCargoView(generics.UpdateAPIView):
     """View для обновления груза"""
 
     serializer_class = UpdateCargoSerializer
+    http_method_names = ['put']
 
     def get_queryset(self):
         cargo_id = self.kwargs.get('pk')
