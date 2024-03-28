@@ -251,4 +251,6 @@ cython_debug/
 #volumes
 /WelbeX_pg_data
 
+celerybeat-schedule.db
+
 .env_docker
