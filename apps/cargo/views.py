@@ -46,15 +46,13 @@ class GetCargoView(generics.ListAPIView):
         cargo = CargoDAO().dao_get_cargo_with_location()
         arg = self.request.query_params.get('ordering')
         if arg in ['distance', '-distance']:
-            _reverse = False
-            if arg == '-distance':
-                _reverse = True
+            reverse = arg == '-distance'
 
             serializer = DistanceSortedSerializer(context={'request': self.request}, instance=cargo, many=True)
             data = serializer.data
 
             for i in data:
-                sorted_distance = sorted(i['count_nearest_cars'], key=lambda x: x.get('distance_car'), reverse=_reverse)
+                sorted_distance = sorted(i['count_nearest_cars'], key=lambda x: x.get('distance_car'), reverse=reverse)
                 i['count_nearest_cars'] = sorted_distance
             return Response(data)
         else:
