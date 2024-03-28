@@ -68,3 +68,26 @@ class CargoService:
             }
             car_info_data.append(car_data)
         return car_info_data
+
+    @staticmethod
+    def get_nearest_cars_distance(instance):
+        """Получение груза и количество ближайших машин"""
+        cars = CarDAO().dao_get_all_cars_with_location()
+
+        nearest_cars = []
+
+        location_cargo_lat: LocationModel = instance.location_pick_up.lat
+        location_cargo_lng: LocationModel = instance.location_pick_up.lng
+
+        for car in cars:
+            location_cars_lat: CarModel = car.now_location.lat
+            location_cars_lng: CarModel = car.now_location.lng
+
+            distance_in_miles = geodesic((location_cargo_lat, location_cargo_lng),
+                                         (location_cars_lat, location_cars_lng)).miles
+
+            if distance_in_miles <= 450:
+                nearest_cars.append({'distance_car': distance_in_miles, 'car_id': car.pk, 'car_number': car.number})
+        return {
+            'nearest_cars': nearest_cars
+        }

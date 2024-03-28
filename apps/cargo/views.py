@@ -8,6 +8,7 @@ from apps.cargo.dao_cargo import CargoDAO
 from apps.cargo.filters import WeightFilter
 from apps.cargo.serializers import (CargoRetrieveSerializer,
                                     CreateCargoSerializer,
+                                    DistanceSortedSerializer,
                                     GetCargoSerializer,
                                     UpdateCargoSerializer,)
 
@@ -26,9 +27,28 @@ class GetCargoView(generics.ListAPIView):
     ordering = ['weight']
     filterset_class = WeightFilter
     pagination_class = PageNumberPagination
+    queryset = CargoDAO().dao_get_cargo_with_location()
 
     serializer_class = GetCargoSerializer
-    queryset = CargoDAO().dao_get_cargo_with_location()
+
+    def list(self, request, *args, **kwargs):
+        cargo = CargoDAO().dao_get_cargo_with_location()
+        arg = self.request.query_params.get('ordering')
+        if arg in ['distance', '-distance']:
+            _reverse = False
+            if arg == '-distance':
+                _reverse = True
+
+            serializer = DistanceSortedSerializer(context={'request': self.request}, instance=cargo, many=True)
+            data = serializer.data
+
+            for i in data:
+                sorted_distance = sorted(i['count_nearest_cars'], key=lambda x: x.get('distance_car'), reverse=_reverse)
+                i['count_nearest_cars'] = sorted_distance
+            return Response(data)
+        else:
+            serializer = GetCargoSerializer(instance=cargo, many=True)
+            return Response(serializer.data)
 
 
 class GetCargoIdView(generics.RetrieveAPIView):

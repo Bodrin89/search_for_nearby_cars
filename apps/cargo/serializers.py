@@ -73,3 +73,28 @@ class UpdateCargoSerializer(serializers.ModelSerializer):
         instance.weight = validated_data.get('weight', instance.weight)
         instance.save()
         return instance
+
+
+class DistanceSortedSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения груза c номерами машин и расстоянием от них до груза"""
+
+    location_pick_up = serializers.PrimaryKeyRelatedField(read_only=True)
+    location_delivery = serializers.PrimaryKeyRelatedField(read_only=True)
+    count_nearest_cars = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CargoModel
+        fields = ('id', 'location_pick_up', 'location_delivery', 'count_nearest_cars')
+
+    def validate(self, attrs):
+
+        return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        value = data.pop('count_nearest_cars')
+        data['count_nearest_cars'] = value.get('nearest_cars')
+        return data
+
+    def get_count_nearest_cars(self, instance):
+        return CargoService().get_nearest_cars_distance(instance)
