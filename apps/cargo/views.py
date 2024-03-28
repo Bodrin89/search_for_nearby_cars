@@ -1,5 +1,6 @@
-
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 
 from apps.cargo.dao_cargo import CargoDAO
@@ -18,8 +19,12 @@ class CreateCargoView(generics.CreateAPIView):
 class GetCargoView(generics.ListAPIView):
     """View для получения груза и количество ближайших машин"""
 
-    serializer_class = GetCargoSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    ordering_fields = ('id', 'weight')
+    ordering = ['weight']
+    search_fields = ('weight',)
 
+    serializer_class = GetCargoSerializer
     queryset = CargoDAO().dao_get_cargo_with_location()
 
 

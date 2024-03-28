@@ -33,13 +33,28 @@ services:
     env_file:
       - .env_docker
     ports:
-      - 8000:8000
+      - 8088:8088
     volumes:
       - ./:/code
-#    command: ["gunicorn", "config.wsgi", "-w", "4", "-b", "0.0.0.0:8000"]
-    command: [python3, manage.py, runserver, 0.0.0.0:8000]
-    entrypoint: ["bash", "entrypoint.sh"]
+      - ./static:/static
+    command: [gunicorn, config.wsgi, -w, '4', -b, 0.0.0.0:8088]
+#    command: [python3, manage.py, runserver, 0.0.0.0:8000]
+    entrypoint: [bash, entrypoint.sh]
 
+    networks:
+      - WelbeX_network
+
+  nginx:
+    container_name: WelbeX_nginx
+    image: nginx:alpine
+    volumes:
+      - ./nginx_conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx_conf/nginx_site.conf:/etc/nginx/conf_site/nginx_site.conf
+      - ./static:/static
+    ports:
+      - 8000:80
+    depends_on:
+      - api
     networks:
       - WelbeX_network
 

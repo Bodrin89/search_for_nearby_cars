@@ -4,9 +4,9 @@ import os
 import random
 from pathlib import Path
 
-
 import psycopg2
 from dotenv import load_dotenv
+
 
 def generate_custom_code():
     random_number = random.randint(1000, 9999)
@@ -71,4 +71,3 @@ def added_cars_postgres():
 
 load_data_postgres(file_path)
 added_cars_postgres()
-
