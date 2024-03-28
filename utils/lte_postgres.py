@@ -69,5 +69,13 @@ def added_cars_postgres():
     cursor.close()
 
 
-load_data_postgres(file_path)
-added_cars_postgres()
+cursor = con_postgres.cursor()
+cursor.execute(
+    """SELECT count(id) FROM location_location LIMIT 1"""
+)
+
+count = cursor.fetchone()[0]
+
+if count == 0:
+    load_data_postgres(file_path)
+    added_cars_postgres()

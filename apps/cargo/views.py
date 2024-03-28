@@ -4,6 +4,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 
 from apps.cargo.dao_cargo import CargoDAO
+from apps.cargo.filters import WeightFilter
 from apps.cargo.serializers import (CargoRetrieveSerializer,
                                     CreateCargoSerializer,
                                     GetCargoSerializer,
@@ -22,7 +23,7 @@ class GetCargoView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = ('id', 'weight')
     ordering = ['weight']
-    search_fields = ('weight',)
+    filterset_class = WeightFilter
 
     serializer_class = GetCargoSerializer
     queryset = CargoDAO().dao_get_cargo_with_location()
