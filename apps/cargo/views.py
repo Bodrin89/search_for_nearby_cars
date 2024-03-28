@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from apps.cargo.dao_cargo import CargoDAO
@@ -24,6 +25,7 @@ class GetCargoView(generics.ListAPIView):
     ordering_fields = ('id', 'weight')
     ordering = ['weight']
     filterset_class = WeightFilter
+    pagination_class = PageNumberPagination
 
     serializer_class = GetCargoSerializer
     queryset = CargoDAO().dao_get_cargo_with_location()

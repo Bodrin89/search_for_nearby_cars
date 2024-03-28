@@ -27,6 +27,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'debug_toolbar',
     'django_filters',
+    'drf_spectacular',
 ]
 
 LOCAL_APPS = [
@@ -76,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -87,7 +87,6 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_POR'),
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -105,9 +104,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'WelbX',
+    'DESCRIPTION': 'Сервис поиска ближайших машин для перевозки грузов'
+}
 
 LANGUAGE_CODE = 'en-us'
 
@@ -116,7 +122,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 STATIC_URL = 'static/'
 STATIC_ROOT = Path(BASE_DIR.resolve().parent, 'static/')
@@ -132,7 +137,6 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-
 
 LOGGING = {
     'version': 1,
