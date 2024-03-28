@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
@@ -19,6 +20,16 @@ class CreateCargoView(generics.CreateAPIView):
     serializer_class = CreateCargoSerializer
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(name='ordering',
+                         location=OpenApiParameter.QUERY,
+                         description='Сортировка ближайших машин по расстоянию от груза',
+                         required=False,
+                         enum=['distance', '-distance'],
+                         type=str),
+    ],
+)
 class GetCargoView(generics.ListAPIView):
     """View для получения груза и количество ближайших машин"""
 
