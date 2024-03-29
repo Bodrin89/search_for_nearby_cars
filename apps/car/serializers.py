@@ -31,6 +31,8 @@ class UpdateCarSerializer(serializers.ModelSerializer):
         zip_now_location = validated_data.pop('zip_now_location')
 
         location = LocationDAO.get_location_for_zip(zip_now_location)
+        if not location:
+            raise serializers.ValidationError('Локация не найдена')
 
         instance.number = validated_data.get('number', instance.number)
         instance.now_location = location

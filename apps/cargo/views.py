@@ -61,7 +61,7 @@ class GetCargoView(generics.ListAPIView):
 
 
 class GetCargoIdView(generics.RetrieveAPIView):
-    """View для получения груза c номерами машин и расстоянием от них до груза"""
+    """View для получения груза по id c номерами машин и расстоянием от них до груза"""
 
     serializer_class = CargoRetrieveSerializer
 
