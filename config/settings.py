@@ -138,6 +138,8 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
+DISTANCE_MILES = 450
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

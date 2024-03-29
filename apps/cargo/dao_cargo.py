@@ -1,4 +1,3 @@
-from rest_framework.exceptions import ValidationError
 
 from apps.cargo.models import CargoModel
 
@@ -19,10 +18,8 @@ class CargoDAO:
     @staticmethod
     def dao_get_retrieve_cargo(cargo_id):
         """Получение груза по id"""
-        try:
-            if CargoModel.objects.filter(id=cargo_id):
-                return CargoModel.objects.filter(id=cargo_id)
-            else:
-                raise ValidationError('Груз не найден')
-        except CargoModel.DoesNotExist:
-            raise ValidationError('Груз не найден')
+        return CargoModel.objects.select_related('location_pick_up', 'location_delivery').filter(id=cargo_id)
+        # if cargo:
+        #     return cargo
+        # else:
+        #     raise ValidationError('Груз не найден')

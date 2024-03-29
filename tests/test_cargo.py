@@ -107,9 +107,9 @@ class TestGetCargoWithCar:
             new_location = location_factory(lat=new_lat, lng=new_lng)
             car_item: CarFactory = car_factory(number=generate_custom_code(), now_location=new_location)
             car.append(car_item)
-        car_info = CargoService.get_nearest_cars_distance(cargo, car)
-
-        itr_obj = car_info.get('nearest_cars')
+        args = {'distance': 10}
+        car_info = CargoService.get_nearest_cars(cargo, car, args)
+        itr_obj = car_info.get('count_nearest_cars')
         sorted_distance = sorted(itr_obj, key=lambda x: x.get('distance_car'))
 
         expected_response = {
@@ -136,9 +136,10 @@ class TestGetCargoWithCar:
             new_location = location_factory(lat=new_lat, lng=new_lng)
             car_item: CarFactory = car_factory(number=generate_custom_code(), now_location=new_location)
             car.append(car_item)
-        car_info = CargoService.get_nearest_cars_distance(cargo, car)
+        args = {'distance': 10}
+        car_info = CargoService.get_nearest_cars(cargo, car, args)
 
-        itr_obj = car_info.get('nearest_cars')
+        itr_obj = car_info.get('count_nearest_cars')
         sorted_distance = sorted(itr_obj, key=lambda x: x.get('distance_car'), reverse=True)
 
         expected_response = {
@@ -191,21 +192,20 @@ class TestGetCargoId:
             car.append(car_factory(number=generate_custom_code()))
 
         cargo = cargo_factory()
-        car_info = CargoService.get_info_cars(cargo, car)
+        args = {}
+        car_info = CargoService.get_nearest_cars(cargo, car, args)
         url = reverse('retrieve-cargo', kwargs={'pk': cargo.id})
         response = client.get(path=url)
-
         expected_response = {
             'id': cargo.id,
             'location_pick_up': cargo.location_pick_up.id,
             'location_delivery': cargo.location_delivery.id,
-            'weight': cargo.weight,
             'description': cargo.description,
-            'car_info': car_info
+            'weight': cargo.weight,
+            'car_info': car_info.get('car_info')
         }
-
         assert response.status_code == 200
-        assert response.data == expected_response
+        assert response.data[0] == expected_response
 
 
 @pytest.mark.django_db

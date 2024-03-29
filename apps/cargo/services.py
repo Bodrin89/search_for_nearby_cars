@@ -10,12 +10,12 @@ class CargoService:
     """Сервис для груза"""
 
     @staticmethod
-    def sorted_distance_cars(data, arg):
+    def sorted_distance_cars(data, arg, key):
         """Сортировка ближайших машин по расстоянию от груза"""
         _reverse = arg == '-distance'
         for i in data:
-            sorted_distance = sorted(i['count_nearest_cars'], key=lambda x: x.get('distance_car'), reverse=_reverse)
-            i['count_nearest_cars'] = sorted_distance
+            sorted_distance = sorted(i[key], key=lambda x: x.get('distance_car'), reverse=_reverse)
+            i[key] = sorted_distance
         return data
 
     @staticmethod
@@ -35,14 +35,14 @@ class CargoService:
         return cargo
 
     @staticmethod
-    def get_nearest_cars(instance, cars):
+    def get_nearest_cars(instance, cars, args):
         """Получение груза и количество ближайших машин"""
-        # cars = CarDAO().dao_get_all_cars_with_location()
         nearest_cars = []
 
         location_cargo_lat: LocationModel = instance.location_pick_up.lat
         location_cargo_lng: LocationModel = instance.location_pick_up.lng
 
+        response_key = 'car_info'
         for car in cars:
             location_cars_lat: CarModel = car.now_location.lat
             location_cars_lng: CarModel = car.now_location.lng
@@ -50,50 +50,21 @@ class CargoService:
             distance_in_miles = geodesic((location_cargo_lat, location_cargo_lng),
                                          (location_cars_lat, location_cars_lng)).miles
 
-            if distance_in_miles <= 450:
-                nearest_cars.append(car)
-        return {
-            'count_nearest_cars': len(nearest_cars)
-        }
-
-    @staticmethod
-    def get_info_cars(obj, cars):
-        car_info_data = []
-
-        location_cargo_lat = obj.location_pick_up.lat
-        location_cargo_lng = obj.location_pick_up.lng
-
-        for car in cars:
-            location_cars_lat = car.now_location.lat
-            location_cars_lng = car.now_location.lng
-
-            distance_in_miles = geodesic((location_cargo_lat, location_cargo_lng),
-                                         (location_cars_lat, location_cars_lng)).miles
-            car_data = {
-                'car_number': car.number,
-                'distance': distance_in_miles
-            }
-            car_info_data.append(car_data)
-        return car_info_data
-
-    @staticmethod
-    def get_nearest_cars_distance(instance, cars):
-        """Получение груза и количество ближайших машин"""
-
-        nearest_cars = []
-
-        location_cargo_lat: LocationModel = instance.location_pick_up.lat
-        location_cargo_lng: LocationModel = instance.location_pick_up.lng
-
-        for car in cars:
-            location_cars_lat: CarModel = car.now_location.lat
-            location_cars_lng: CarModel = car.now_location.lng
-
-            distance_in_miles = geodesic((location_cargo_lat, location_cargo_lng),
-                                         (location_cars_lat, location_cars_lng)).miles
-
-            if distance_in_miles <= 450:
-                nearest_cars.append({'distance_car': distance_in_miles, 'car_id': car.pk, 'car_number': car.number})
-        return {
-            'nearest_cars': nearest_cars
-        }
+            if distance := args.get('distance'):
+                if args.get('len_cars'):
+                    if distance_in_miles <= int(distance):
+                        nearest_cars.append(car)
+                else:
+                    response_key = 'count_nearest_cars'
+                    nearest_cars.append({'distance_car': distance_in_miles, 'car_id': car.pk, 'car_number': car.number})
+            else:
+                car_data = {
+                    'car_number': car.number,
+                    'distance_car': distance_in_miles
+                }
+                nearest_cars.append(car_data)
+        if args.get('distance'):
+            if args.get('len_cars'):
+                response_key = 'count_nearest_cars'
+                return {response_key: len(nearest_cars)}
+        return {response_key: nearest_cars}
