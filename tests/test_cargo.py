@@ -1,7 +1,7 @@
-
 import factory
 import pytest
 from django.urls import reverse
+from rest_framework.response import Response
 
 from apps.cargo.services import CargoService
 from tests.factories import CarFactory, CargoFactory, LocationFactory
@@ -96,6 +96,64 @@ class TestGetCargoWithCar:
         assert response.status_code == 200
         assert response.data[0] == expected_response
 
+    def test_get_cargo_with_car_sorted_asc(self, client, cargo_factory, location_factory, car_factory):
+        location: LocationFactory = location_factory()
+        cargo = cargo_factory(location_pick_up=location)
+        NEAREST_CAR_COUNT = 10
+
+        car = []
+        for _ in range(NEAREST_CAR_COUNT):
+            new_lat, new_lng = generate_random_coordinates(location, 450)
+            new_location = location_factory(lat=new_lat, lng=new_lng)
+            car_item: CarFactory = car_factory(number=generate_custom_code(), now_location=new_location)
+            car.append(car_item)
+        car_info = CargoService.get_nearest_cars_distance(cargo, car)
+
+        itr_obj = car_info.get('nearest_cars')
+        sorted_distance = sorted(itr_obj, key=lambda x: x.get('distance_car'))
+
+        expected_response = {
+            'id': cargo.id,
+            'location_pick_up': cargo.location_pick_up.id,
+            'location_delivery': cargo.location_delivery.id,
+            'count_nearest_cars': sorted_distance
+        }
+
+        url = reverse('get-cargo')
+        response: Response = client.get(path=url, data={'ordering': 'distance'})
+
+        assert response.status_code == 200
+        assert response.data[0] == expected_response
+
+    def test_get_cargo_with_car_sorted_desc(self, client, cargo_factory, location_factory, car_factory):
+        location: LocationFactory = location_factory()
+        cargo = cargo_factory(location_pick_up=location)
+        NEAREST_CAR_COUNT = 10
+
+        car = []
+        for _ in range(NEAREST_CAR_COUNT):
+            new_lat, new_lng = generate_random_coordinates(location, 450)
+            new_location = location_factory(lat=new_lat, lng=new_lng)
+            car_item: CarFactory = car_factory(number=generate_custom_code(), now_location=new_location)
+            car.append(car_item)
+        car_info = CargoService.get_nearest_cars_distance(cargo, car)
+
+        itr_obj = car_info.get('nearest_cars')
+        sorted_distance = sorted(itr_obj, key=lambda x: x.get('distance_car'), reverse=True)
+
+        expected_response = {
+            'id': cargo.id,
+            'location_pick_up': cargo.location_pick_up.id,
+            'location_delivery': cargo.location_delivery.id,
+            'count_nearest_cars': sorted_distance
+        }
+
+        url = reverse('get-cargo')
+        response: Response = client.get(path=url, data={'ordering': '-distance'})
+
+        assert response.status_code == 200
+        assert response.data[0] == expected_response
+
     def test_get_cargo_with_not_car(self, client, cargo_factory, location_factory, car_factory):
         """Тестирование получения грузов с ближайшими машинами которые НЕ попадают в заданный радиус"""
         location: LocationFactory = location_factory()
@@ -109,7 +167,6 @@ class TestGetCargoWithCar:
             new_location = location_factory(lat=new_lat, lng=new_lng)
             car_item: CarFactory = car_factory(number=generate_custom_code(), now_location=new_location)
             car.append(car_item)
-
         expected_response = {
             'id': cargo.id,
             'location_pick_up': cargo.location_pick_up.id,
@@ -181,6 +238,7 @@ class TestUpdateCargo:
 @pytest.mark.django_db
 class TestDeleteCargo:
     """Тест на удаление груза"""
+
     def test_delete_cargo(self, client, cargo_factory):
         """Удаление груза по id"""
         cargo = cargo_factory()
