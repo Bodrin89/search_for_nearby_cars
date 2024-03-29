@@ -73,7 +73,6 @@ class TestGetCargoWithCar:
     def test_get_cargo_with_car(self, client, cargo_factory, location_factory, car_factory):
         """Тестирование получения грузов с ближайшими машинами которые попадают в заданный радиус"""
         location: LocationFactory = location_factory()
-
         cargo = cargo_factory(location_pick_up=location)
         NEAREST_CAR_COUNT = 10
 
@@ -93,6 +92,7 @@ class TestGetCargoWithCar:
 
         url = reverse('get-cargo')
         response = client.get(path=url)
+
         assert response.status_code == 200
         assert response.data[0] == expected_response
 

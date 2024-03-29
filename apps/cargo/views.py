@@ -5,6 +5,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+from apps.car.dao_car import CarDAO
 from apps.cargo.dao_cargo import CargoDAO
 from apps.cargo.filters import WeightFilter
 from apps.cargo.serializers import (CargoRetrieveSerializer,
@@ -12,6 +13,7 @@ from apps.cargo.serializers import (CargoRetrieveSerializer,
                                     DistanceSortedSerializer,
                                     GetCargoSerializer,
                                     UpdateCargoSerializer,)
+from apps.cargo.services import CargoService
 
 
 class CreateCargoView(generics.CreateAPIView):
@@ -38,25 +40,23 @@ class GetCargoView(generics.ListAPIView):
     ordering = ['weight']
     filterset_class = WeightFilter
     pagination_class = PageNumberPagination
-    queryset = CargoDAO().dao_get_cargo_with_location()
 
+    queryset = CargoDAO.dao_get_cargo_with_location()
     serializer_class = GetCargoSerializer
 
-    def list(self, request, *args, **kwargs):
-        cargo = CargoDAO().dao_get_cargo_with_location()
+    def get(self, request, *args, **kwargs):
+        cars = CarDAO.dao_get_all_cars_with_location()
+        cargo = CargoDAO.dao_get_cargo_with_location()
+        serializer = GetCargoSerializer(cargo, context={'cars': cars}, many=True)
         arg = self.request.query_params.get('ordering')
         if arg in ['distance', '-distance']:
-            reverse = arg == '-distance'
 
-            serializer = DistanceSortedSerializer(context={'request': self.request}, instance=cargo, many=True)
+            serializer = DistanceSortedSerializer(context={'request': self.request, 'cars': cars}, instance=cargo,
+                                                  many=True)
             data = serializer.data
-
-            for i in data:
-                sorted_distance = sorted(i['count_nearest_cars'], key=lambda x: x.get('distance_car'), reverse=reverse)
-                i['count_nearest_cars'] = sorted_distance
+            CargoService.sorted_distance_cars(data, arg)
             return Response(data)
         else:
-            serializer = GetCargoSerializer(instance=cargo, many=True)
             return Response(serializer.data)
 
 

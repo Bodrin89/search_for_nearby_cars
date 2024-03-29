@@ -1,7 +1,6 @@
 from geopy.distance import geodesic
 from rest_framework.exceptions import ValidationError
 
-from apps.car.dao_car import CarDAO
 from apps.car.models import CarModel
 from apps.cargo.dao_cargo import CargoDAO
 from apps.location.models import LocationModel
@@ -9,6 +8,15 @@ from apps.location.models import LocationModel
 
 class CargoService:
     """Сервис для груза"""
+
+    @staticmethod
+    def sorted_distance_cars(data, arg):
+        """Сортировка ближайших машин по расстоянию от груза"""
+        _reverse = arg == '-distance'
+        for i in data:
+            sorted_distance = sorted(i['count_nearest_cars'], key=lambda x: x.get('distance_car'), reverse=_reverse)
+            i['count_nearest_cars'] = sorted_distance
+        return data
 
     @staticmethod
     def create_cargo(data):
@@ -27,10 +35,9 @@ class CargoService:
         return cargo
 
     @staticmethod
-    def get_nearest_cars(instance):
+    def get_nearest_cars(instance, cars):
         """Получение груза и количество ближайших машин"""
-        cars = CarDAO().dao_get_all_cars_with_location()
-
+        # cars = CarDAO().dao_get_all_cars_with_location()
         nearest_cars = []
 
         location_cargo_lat: LocationModel = instance.location_pick_up.lat
@@ -70,9 +77,8 @@ class CargoService:
         return car_info_data
 
     @staticmethod
-    def get_nearest_cars_distance(instance):
+    def get_nearest_cars_distance(instance, cars):
         """Получение груза и количество ближайших машин"""
-        cars = CarDAO().dao_get_all_cars_with_location()
 
         nearest_cars = []
 

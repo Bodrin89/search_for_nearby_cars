@@ -41,7 +41,8 @@ class GetCargoSerializer(serializers.ModelSerializer):
         return data
 
     def get_count_nearest_cars(self, instance):
-        return CargoService().get_nearest_cars(instance)
+        cars = self.context['cars']
+        return CargoService().get_nearest_cars(instance, cars)
 
 
 class CargoRetrieveSerializer(serializers.ModelSerializer):
@@ -97,4 +98,5 @@ class DistanceSortedSerializer(serializers.ModelSerializer):
         return data
 
     def get_count_nearest_cars(self, instance):
-        return CargoService().get_nearest_cars_distance(instance)
+        cars = self.context['cars']
+        return CargoService().get_nearest_cars_distance(instance, cars)
